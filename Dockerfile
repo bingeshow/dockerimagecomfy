@@ -1,0 +1,33 @@
+# ========= BASE IMAGE =========
+FROM nvidia/cuda:12.8.1-runtime-ubuntu24.04
+
+# ========= SYSTEM SETUP =========
+RUN apt-get update && \
+    apt-get install -y python3.12 python3.12-venv python3-pip git curl aria2 && \
+    ln -s /usr/bin/python3.12 /usr/bin/python
+
+# ========= PYTHON ENV =========
+RUN python -m pip install --upgrade pip
+
+# ========= TORCH NIGHTLY INSTALL =========
+# 安装你的当前 nightly dev build (20250531)
+RUN pip install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
+
+# ========= CLONE COMFYUI =========
+RUN git clone https://github.com/comfyanonymous/ComfyUI.git /ComfyUI && \
+    cd /ComfyUI && \
+    git checkout 97f23b81f3421255ec4b425d2d8f4841207e0cd8
+
+# ========= INSTALL COMFYUI DEPENDENCIES =========
+WORKDIR /ComfyUI
+RUN pip install -r requirements.txt
+
+# ========= OPTIONAL: INSTALL EXTRA PACKAGES =========
+# 根据你的 pip freeze 确认是否需要这些包
+RUN pip install numpy opencv-python onnxruntime-gpu
+
+# ========= EXPOSE PORT =========
+EXPOSE 8188
+
+# ========= DEFAULT CMD =========
+CMD ["python", "main.py", "--listen", "0.0.0.0", "--port", "8188"]
