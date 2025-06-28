@@ -2,16 +2,26 @@
 FROM nvidia/cuda:12.8.1-runtime-ubuntu24.04
 
 # ========= SYSTEM SETUP =========
+# 安装 Python 3.12.3 及基础工具
 RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository universe && \
+    apt-get update && \
     apt-get install -y python3.12 python3.12-venv python3-pip git curl aria2 && \
     ln -s /usr/bin/python3.12 /usr/bin/python
+
+# ========= 验证 Python 版本 =========
+RUN python --version
 
 # ========= PYTHON ENV =========
 RUN python -m pip install --upgrade pip
 
 # ========= TORCH NIGHTLY INSTALL =========
-# 安装你的当前 nightly dev build (20250531)
-RUN pip install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
+# 安装你的当前 nightly dev build (20250531) + CUDA 12.8
+RUN pip install --pre torch==2.8.0.dev20250531+cu128 torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
+
+# ========= 验证 PyTorch CUDA =========
+RUN python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"
 
 # ========= CLONE COMFYUI =========
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git /ComfyUI && \
@@ -23,7 +33,6 @@ WORKDIR /ComfyUI
 RUN pip install -r requirements.txt
 
 # ========= OPTIONAL: INSTALL EXTRA PACKAGES =========
-# 根据你的 pip freeze 确认是否需要这些包
 RUN pip install numpy opencv-python onnxruntime-gpu
 
 # ========= EXPOSE PORT =========
