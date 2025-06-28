@@ -13,7 +13,8 @@ RUN apt-get update && \
 # ========= PYTHON ENV =========
 # RUN python3.12 -m venv /opt/venv
 # ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --upgrade pip
+# RUN pip install --upgrade pip
+RUN python -m pip install --upgrade pip
 
 # ========= TORCH NIGHTLY INSTALL =========
 # RUN pip install --pre torch==2.8.0.dev20250531+cu128 torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
