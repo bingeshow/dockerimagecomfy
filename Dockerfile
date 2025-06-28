@@ -1,5 +1,5 @@
 # ========= BASE IMAGE =========
-FROM nvidia/cuda:12.8.1-runtime-ubuntu24.04
+FROM nvidia/cuda:12.8.1-devel-ubuntu24.04
 
 # ========= SYSTEM SETUP =========
 RUN apt-get update && \
