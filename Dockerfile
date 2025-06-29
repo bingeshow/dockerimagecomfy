@@ -10,6 +10,7 @@ RUN apt-get update && \
     ln -s /usr/bin/python3.12 /usr/bin/python && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN apt update && apt install -y libgl1
 
 # ========= TORCH NIGHTLY INSTALL =========
 # RUN pip install --pre torch==2.8.0.dev20250531+cu128 torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
